@@ -1,0 +1,37 @@
+# Dart / Flutter
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub/
+build/
+pubspec.lock
+.fvm/
+.dccache
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.iws
+
+# Coverage
+coverage/
+test/.test_coverage.dart
+
+# macOS
+.DS_Store
+
+# Example app build artifacts
+example/.dart_tool/
+example/.flutter-plugins
+example/.flutter-plugins-dependencies
+example/build/
+example/ios/Pods/
+example/android/.gradle/
+example/android/build/
+example/android/app/build/
+
+# Local env
+.env
+.env.local
