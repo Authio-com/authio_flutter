@@ -12,7 +12,7 @@ permissions:
 # with refresh + access tokens minted by `flutter pub token add`. We
 # materialize that file at runtime from two secrets and then run
 # `flutter pub publish --force`. The credentials write + publish steps
-# both skip cleanly when the secrets aren't set.
+# credentials are required for every release tag.
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -26,8 +26,17 @@ jobs:
           channel: stable
       - run: flutter pub get
       - run: flutter pub publish --dry-run
+      - name: Require pub.dev credentials
+        run: |
+          missing=0
+          for name in PUB_DEV_PUBLISH_ACCESS_TOKEN PUB_DEV_PUBLISH_REFRESH_TOKEN; do
+            if [ -z "${!name}" ]; then
+              echo "::error::$name is required for a release tag"
+              missing=1
+            fi
+          done
+          exit "$missing"
       - name: Write pub.dev credentials
-        if: env.PUB_DEV_PUBLISH_ACCESS_TOKEN != '' && env.PUB_DEV_PUBLISH_REFRESH_TOKEN != ''
         run: |
           mkdir -p ~/.config/dart
           cat > ~/.config/dart/pub-credentials.json <<EOF
@@ -40,10 +49,4 @@ jobs:
           }
           EOF
       - name: Publish to pub.dev
-        if: env.PUB_DEV_PUBLISH_ACCESS_TOKEN != '' && env.PUB_DEV_PUBLISH_REFRESH_TOKEN != ''
         run: flutter pub publish --force
-      - name: Skip publish (no pub.dev tokens)
-        if: env.PUB_DEV_PUBLISH_ACCESS_TOKEN == '' || env.PUB_DEV_PUBLISH_REFRESH_TOKEN == ''
-        run: |
-          echo "::notice::PUB_DEV_PUBLISH_ACCESS_TOKEN or PUB_DEV_PUBLISH_REFRESH_TOKEN not set; skipping publish."
-          echo "Mint via 'flutter pub token add https://pub.dev', then set both in Settings → Secrets."
