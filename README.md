@@ -34,7 +34,7 @@ import 'package:authio/authio.dart';
 
 final authio = Authio(
   projectId: 'proj_...',
-  hostedUiUrl: 'https://auth.authio.com',
+  hostedUiUrl: 'https://lobby.authio.com',
 );
 
 // Magic link sign-in
